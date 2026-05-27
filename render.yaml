@@ -2,7 +2,7 @@ services:
   - type: web
     name: kai-it-pro-classroomio-dashboard
     runtime: docker
-    plan: standard
+    plan: pro
     region: frankfurt
     dockerContext: .
     dockerfilePath: ./docker/Dockerfile.dashboard

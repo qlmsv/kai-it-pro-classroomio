@@ -12,7 +12,7 @@ COPY . .
 
 RUN pnpm install --frozen-lockfile --ignore-scripts --filter @cio/dashboard...
 RUN find . -name 'tsconfig.tsbuildinfo' -delete
-RUN NODE_OPTIONS="--max-old-space-size=3072" \
+RUN NODE_OPTIONS="--max-old-space-size=4096" \
     PUBLIC_IS_SELFHOSTED="${PUBLIC_IS_SELFHOSTED}" \
     pnpm -r --filter @cio/dashboard... build
 
