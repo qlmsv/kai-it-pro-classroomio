@@ -25,9 +25,7 @@
 
   const hasSetupError = $derived(!appInitApi.loading && !!appInitApi.error);
 
-  const pageTitle = $derived(
-    data.isOrgSite && data.org ? data.org.name : "ClassroomIO - The Course Platform That's Actually Easy To Use"
-  );
+  const pageTitle = $derived(data.isOrgSite && data.org ? data.org.name : 'Kai IT Pro Courses');
 
   const authAction = $derived(
     $user.isLoggedIn
@@ -83,8 +81,8 @@
   {/if}
 {:else if hasSetupError}
   <Empty
-    title="Something Went Wrong"
-    description="We encountered an unexpected error. Please reload the page or contact us for support."
+    title="Что-то пошло не так"
+    description="Перезагрузите страницу или напишите в поддержку."
     icon={FrownIcon}
     variant="page"
     layout="full-page"
@@ -92,8 +90,8 @@
   >
     <p class="my-2 text-red-500">{appInitApi.error}</p>
     <div class="flex gap-2">
-      <Button variant="secondary" onclick={() => window.location.reload()}>Reload Page</Button>
-      <Button variant="default" href="https://classroomio.com/contact">Contact Us</Button>
+      <Button variant="secondary" onclick={() => window.location.reload()}>Перезагрузить</Button>
+      <Button variant="default" href="https://t.me/kulmashev">Написать в поддержку</Button>
     </div>
   </Empty>
 {:else}

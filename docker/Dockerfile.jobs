@@ -1,0 +1,21 @@
+FROM node:20.19.3-slim
+
+WORKDIR /app
+
+ENV CI=true
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN corepack enable && corepack prepare pnpm@10.19.0 --activate
+
+COPY . .
+
+RUN pnpm install --frozen-lockfile --ignore-scripts --shamefully-hoist --filter @cio/jobs-worker...
+RUN find . -name 'tsconfig.tsbuildinfo' -delete
+RUN pnpm -r --filter @cio/jobs-worker... build
+
+ENV NODE_ENV=production
+
+CMD ["pnpm", "--filter", "@cio/jobs-worker", "start"]

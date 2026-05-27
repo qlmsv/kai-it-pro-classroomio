@@ -1,0 +1,156 @@
+services:
+  - type: web
+    name: kai-it-pro-classroomio-dashboard
+    runtime: docker
+    plan: standard
+    region: frankfurt
+    dockerContext: .
+    dockerfilePath: ./docker/Dockerfile.dashboard
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PUBLIC_IS_SELFHOSTED
+        value: 'true'
+      - key: PUBLIC_APP_TITLE
+        value: Kai IT Pro Courses
+      - key: PUBLIC_APP_DESCRIPTION
+        value: Курсы и сертификация AI-операторов Kai IT Pro
+      - key: PUBLIC_SERVER_URL
+        value: https://courses-api.kai-it.pro
+      - key: PRIVATE_SERVER_URL
+        value: https://kai-it-pro-classroomio-api.onrender.com
+      - key: DASHBOARD_ORIGIN
+        value: https://courses.kai-it.pro
+      - key: PRIVATE_APP_HOST
+        value: kai-it.pro
+      - key: PRIVATE_APP_SUBDOMAINS
+        value: courses
+      - key: AUTH_BEARER_TOKEN
+        sync: false
+      - key: PRIVATE_SERVER_KEY
+        sync: false
+
+  - type: web
+    name: kai-it-pro-classroomio-api
+    runtime: docker
+    plan: standard
+    region: frankfurt
+    dockerContext: .
+    dockerfilePath: ./docker/Dockerfile.api
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PUBLIC_IS_SELFHOSTED
+        value: 'true'
+      - key: PUBLIC_SERVER_URL
+        value: https://courses-api.kai-it.pro
+      - key: TRUSTED_ORIGINS
+        value: https://courses.kai-it.pro,https://courses-api.kai-it.pro,https://kai-it-pro-classroomio-dashboard.onrender.com
+      - key: DASHBOARD_ORIGIN
+        value: https://courses.kai-it.pro
+      - key: AUTH_COOKIE_DOMAIN
+        value: .kai-it.pro
+      - key: PRIVATE_APP_HOST
+        value: kai-it.pro
+      - key: PRIVATE_APP_SUBDOMAINS
+        value: courses
+      - key: DATABASE_URL
+        fromDatabase:
+          name: kai-it-pro-classroomio-db
+          property: connectionString
+      - key: PRIVATE_DATABASE_URL
+        fromDatabase:
+          name: kai-it-pro-classroomio-db
+          property: connectionString
+      - key: REDIS_URL
+        fromDatabase:
+          name: kai-it-pro-classroomio-kv
+          property: connectionString
+      - key: OBJECT_STORAGE_ENDPOINT
+        value: https://kai-it-pro-classroomio-storage.onrender.com
+      - key: OBJECT_STORAGE_PUBLIC_ENDPOINT
+        value: https://kai-it-pro-classroomio-storage.onrender.com
+      - key: OBJECT_STORAGE_FORCE_PATH_STYLE
+        value: 'true'
+      - key: OBJECT_STORAGE_MEDIA_PUBLIC_BASE_URL
+        value: https://kai-it-pro-classroomio-storage.onrender.com/media
+      - key: OBJECT_STORAGE_ACCESS_KEY_ID
+        sync: false
+      - key: OBJECT_STORAGE_SECRET_ACCESS_KEY
+        sync: false
+      - key: BETTER_AUTH_SECRET
+        sync: false
+      - key: AUTH_BEARER_TOKEN
+        sync: false
+      - key: PRIVATE_SERVER_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: GOOGLE_API_KEY
+        sync: false
+
+  - type: worker
+    name: kai-it-pro-classroomio-jobs
+    runtime: docker
+    plan: starter
+    region: frankfurt
+    dockerContext: .
+    dockerfilePath: ./docker/Dockerfile.jobs
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: kai-it-pro-classroomio-db
+          property: connectionString
+      - key: REDIS_URL
+        fromDatabase:
+          name: kai-it-pro-classroomio-kv
+          property: connectionString
+      - key: OBJECT_STORAGE_ENDPOINT
+        value: https://kai-it-pro-classroomio-storage.onrender.com
+      - key: OBJECT_STORAGE_FORCE_PATH_STYLE
+        value: 'true'
+      - key: OBJECT_STORAGE_ACCESS_KEY_ID
+        sync: false
+      - key: OBJECT_STORAGE_SECRET_ACCESS_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+
+  - type: web
+    name: kai-it-pro-classroomio-storage
+    runtime: docker
+    plan: starter
+    region: frankfurt
+    dockerContext: .
+    dockerfilePath: ./docker/Dockerfile.minio
+    healthCheckPath: /minio/health/live
+    autoDeploy: true
+    disk:
+      name: classroomio-storage
+      mountPath: /data
+      sizeGB: 20
+    envVars:
+      - key: MINIO_ROOT_USER
+        sync: false
+      - key: MINIO_ROOT_PASSWORD
+        sync: false
+
+databases:
+  - name: kai-it-pro-classroomio-db
+    databaseName: classroomio
+    user: classroomio
+    plan: basic_1gb
+    region: frankfurt
+    postgresMajorVersion: '16'
+
+  - name: kai-it-pro-classroomio-kv
+    plan: starter
+    region: frankfurt
+    maxmemoryPolicy: noeviction

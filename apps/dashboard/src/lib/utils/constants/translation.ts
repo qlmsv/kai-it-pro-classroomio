@@ -1,6 +1,7 @@
 import type { TLocale } from '@cio/db/types';
 
 export const LANGUAGE: Record<TLocale, string> = {
+  ru: 'Russian',
   da: 'Danish',
   de: 'German',
   en: 'English',
@@ -9,11 +10,7 @@ export const LANGUAGE: Record<TLocale, string> = {
   hi: 'Hindi',
   pl: 'Polish',
   pt: 'Portuguese',
-  ru: 'Russian',
   vi: 'Vietnamese'
 };
 
-export const LANGUAGES = Object.keys(LANGUAGE).map((lang) => ({
-  id: lang,
-  text: LANGUAGE[lang]
-}));
+export const LANGUAGES = [{ id: 'ru', text: LANGUAGE.ru }];

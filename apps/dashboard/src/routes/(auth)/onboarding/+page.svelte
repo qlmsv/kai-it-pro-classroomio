@@ -1,5 +1,4 @@
 <script lang="ts">
-  import * as Select from '@cio/ui/base/select';
   import { Input } from '@cio/ui/base/input';
   import { DomainInput } from '@cio/ui/custom/domain-input';
   import * as Field from '@cio/ui/base/field';
@@ -9,7 +8,7 @@
   import { onboardingApi } from '$features/onboarding/api/onboarding.svelte';
   import { generateSitename } from '$lib/utils/functions/org';
   import { t } from '$lib/utils/functions/translations';
-  import { GOALS, ONBOARDING_STEPS, SOURCES, DROPDOWN_ITEMS } from '$features/onboarding/utils/constants';
+  import { GOALS, ONBOARDING_STEPS, SOURCES } from '$features/onboarding/utils/constants';
   import type { OnboardingField } from '$features/onboarding/utils/types';
   import { untrack } from 'svelte';
 
@@ -17,7 +16,7 @@
     fullname: '',
     orgName: '',
     siteName: '',
-    locale: 'en'
+    locale: 'ru'
   });
   let isSiteNameTouched = $state(false);
 
@@ -58,7 +57,7 @@
       <div class="flex flex-col items-center">
         <div class="mb-4 flex w-full items-center justify-center">
           <img src="/logo-192.png" alt="ClassroomIO logo" height="50" width="50" data-atf="1" />
-          <h4 class="text-xl dark:text-white">ClassroomIO</h4>
+          <h4 class="text-xl dark:text-white">Kai IT Pro Courses</h4>
         </div>
 
         <!-- Loggedin Email -->
@@ -99,7 +98,7 @@
                 bind:value={fields.siteName}
                 placeholder="myschool"
                 prefix="https://"
-                suffix=".classroomio.com"
+                suffix=".kai-it.pro"
                 oninput={() => {
                   isSiteNameTouched = true;
                 }}
@@ -153,21 +152,6 @@
                     {onboardingApi.errors.source}
                   </p>
                 {/if}
-              </div>
-
-              <!-- Language Picker -->
-              <div class="mt-10">
-                <span class="dark:text-white">{$t('content.toggle_label')}: </span>
-                <Select.Root type="single" bind:value={fields.locale}>
-                  <Select.Trigger class="w-full">
-                    <p>{DROPDOWN_ITEMS.find((item) => item.id === fields.locale)?.text}</p>
-                  </Select.Trigger>
-                  <Select.Content>
-                    {#each DROPDOWN_ITEMS as item}
-                      <Select.Item value={item.id}>{item.text}</Select.Item>
-                    {/each}
-                  </Select.Content>
-                </Select.Root>
               </div>
             </div>
           </div>

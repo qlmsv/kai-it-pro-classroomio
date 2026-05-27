@@ -1,8 +1,11 @@
 import {
+  CreateBucketCommand,
   DeleteObjectCommand,
   DeleteObjectCommandInput,
   GetObjectCommand,
   GetObjectCommandInput,
+  HeadBucketCommand,
+  PutBucketPolicyCommand,
   PutObjectCommand,
   PutObjectCommandInput
 } from '@aws-sdk/client-s3';
@@ -15,9 +18,54 @@ export type GetSignedUrlParameters = Parameters<typeof getSignedUrl>;
 
 const PRESIGN_CACHE_TTL_SECONDS = 3000; // 50 min; presigned URLs typically valid 1 hour
 const PRESIGN_CACHE_KEY_PREFIX = 'presign:download:';
+const ensuredBuckets = new Set<string>();
+
+async function ensureBucket(bucketName: string): Promise<void> {
+  if (ensuredBuckets.has(bucketName)) return;
+
+  const client = getS3Client();
+
+  try {
+    await client.send(new HeadBucketCommand({ Bucket: bucketName }));
+  } catch {
+    try {
+      await client.send(new CreateBucketCommand({ Bucket: bucketName }));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (!message.includes('BucketAlreadyOwnedByYou') && !message.includes('BucketAlreadyExists')) {
+        throw error;
+      }
+    }
+  }
+
+  const config = getStorageConfig();
+  if (bucketName === config.bucketMedia) {
+    await client.send(
+      new PutBucketPolicyCommand({
+        Bucket: bucketName,
+        Policy: JSON.stringify({
+          Version: '2012-10-17',
+          Statement: [
+            {
+              Effect: 'Allow',
+              Principal: '*',
+              Action: ['s3:GetObject'],
+              Resource: [`arn:aws:s3:::${bucketName}/*`]
+            }
+          ]
+        })
+      })
+    );
+  }
+
+  ensuredBuckets.add(bucketName);
+}
 
 export async function uploadToS3(params: PutObjectCommandInput): Promise<{ success: boolean; error?: string }> {
   try {
+    if (params.Bucket) {
+      await ensureBucket(params.Bucket);
+    }
     await getS3Client().send(new PutObjectCommand(params));
     return { success: true };
   } catch (error) {
@@ -142,6 +190,8 @@ export async function generateUploadPresignedUrl(
 ): Promise<string> {
   const config = getStorageConfig();
   const client = getPresignS3Client();
+
+  await ensureBucket(bucketName);
 
   const command = new PutObjectCommand({
     Bucket: bucketName,

@@ -5,7 +5,7 @@ const SUPPORTED_LANGUAGES = config?.loaders?.map((loader) => loader.locale) || [
 export const load = async ({ url, data }) => {
   const { pathname } = url;
 
-  const serverLang = data?.serverLang?.split?.('-')?.[0] || 'en';
+  const serverLang = data?.serverLang?.split?.('-')?.[0] || 'ru';
   const persistedLocale = data?.localeCookie || getPersistedLocale();
 
   const userLocale = persistedLocale || data?.locals?.profile?.locale || getInitialLocale(serverLang);
@@ -21,5 +21,5 @@ function getInitialLocale(lang: string): string {
 
   if (SUPPORTED_LANGUAGES.includes(locale)) return locale;
 
-  return 'en';
+  return 'ru';
 }

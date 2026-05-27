@@ -27,10 +27,10 @@
           {...props}
         >
           <Avatar.Root class="ui:flex ui:size-6 ui:items-center ui:justify-center">
-            <Avatar.Image src="/logo-192.png" alt="ClassroomIO logo" />
+            <Avatar.Image src="/logo-192.png" alt="Kai IT Pro logo" />
           </Avatar.Root>
 
-          <span class="truncate font-normal">ClassroomIO</span>
+          <span class="truncate font-normal">Kai IT Pro</span>
           <Badge variant="outline" class="capitalize">
             {PLAN_NAMES[plan] || plan}
           </Badge>

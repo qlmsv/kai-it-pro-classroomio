@@ -2,6 +2,8 @@ const { TRUSTED_ORIGINS: TRUSTED_ORIGINS_STRING, PUBLIC_SERVER_URL } = process.e
 
 const DEFAULT_TRUSTED_ORIGINS = [
   'http://localhost:5173',
+  'https://kai-it.pro',
+  'https://*.kai-it.pro',
   'https://*.classroomio.com',
   'https://*.myclassroomio.com',
   // Common OIDC IdP discovery origins (SSO registration fetches .well-known/openid-configuration)
