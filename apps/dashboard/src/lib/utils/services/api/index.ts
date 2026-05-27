@@ -18,6 +18,10 @@ export const getRequestBaseUrl = () => {
     return process.env.PRIVATE_SERVER_URL || env.PUBLIC_SERVER_URL;
   }
 
+  if (env.PUBLIC_DASHBOARD_API_PROXY === 'true') {
+    return `${window.location.origin}/proxy`;
+  }
+
   // Self-hosted: dashboard and API are on different subdomains of the
   // operator's apex. Browser calls go straight to PUBLIC_SERVER_URL;
   // cookies cross subdomains via AUTH_COOKIE_DOMAIN. No Worker proxy.

@@ -13,6 +13,8 @@ services:
         value: production
       - key: PUBLIC_IS_SELFHOSTED
         value: 'true'
+      - key: PUBLIC_DASHBOARD_API_PROXY
+        value: 'true'
       - key: PUBLIC_APP_TITLE
         value: Kai IT Pro Courses
       - key: PUBLIC_APP_DESCRIPTION

@@ -23,6 +23,9 @@ function resolveBaseURL() {
   if (typeof window === 'undefined') {
     return env.PUBLIC_SERVER_URL || 'http://localhost:3002';
   }
+  if (env.PUBLIC_DASHBOARD_API_PROXY === 'true') {
+    return `${window.location.origin}/proxy/api/auth`;
+  }
   if (env.PUBLIC_IS_SELFHOSTED === 'true' || dev) {
     return env.PUBLIC_SERVER_URL || `${window.location.origin}/api/auth`;
   }

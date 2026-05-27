@@ -47,7 +47,9 @@ export const handle: Handle = async (args) => {
 
   let response: Response;
 
-  if (event.url.pathname.includes('/api')) {
+  if (event.url.pathname.startsWith('/proxy/')) {
+    response = await resolve(event);
+  } else if (event.url.pathname.includes('/api')) {
     response = await handleAPIRoutes(args);
   } else {
     response = await handlePagesRoutes(args);
