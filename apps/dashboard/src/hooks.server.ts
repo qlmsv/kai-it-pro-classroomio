@@ -34,7 +34,7 @@ function ensureAnalyticsSessionCookie(cookies: Parameters<Handle>[0]['event']['c
 }
 
 export const handle: Handle = async (args) => {
-  const { event } = args;
+  const { event, resolve } = args;
   const sessionData = await getSessionData(event.cookies);
 
   if (sessionData) {
