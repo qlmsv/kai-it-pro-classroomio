@@ -2,4 +2,5 @@ FROM minio/minio:latest
 
 EXPOSE 9000
 
-CMD ["sh", "-c", "minio server /data --address :${PORT:-9000} --console-address :9001"]
+ENTRYPOINT ["/bin/sh", "-c"]
+CMD ["minio server /data --address :${PORT:-9000} --console-address :9001"]
